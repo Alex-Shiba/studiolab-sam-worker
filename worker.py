@@ -27,7 +27,7 @@ def build_config():
         model_log_file=os.environ.get("SAM_LOG_FILE", "/var/log/portal/sam.log"),
         model_healthcheck_url="/health",
         handlers=[HandlerConfig(
-            route="/embed", allow_parallel_requests=False, max_queue_time=60.0,
+            route="/embed", allow_parallel_requests=True, max_queue_time=60.0,
             workload_calculator=lambda payload: 100.0,
             benchmark_config=BenchmarkConfig(generator=benchmark_payload, runs=2, concurrency=1),
         )],

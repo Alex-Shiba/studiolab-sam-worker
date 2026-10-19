@@ -121,7 +121,7 @@ def test_config():
     assert config.log_action_config.on_error == ["SAM_FATAL"]
     assert len(config.handlers) == 1
     handler = config.handlers[0]
-    assert handler.route == "/embed" and handler.allow_parallel_requests is False
+    assert handler.route == "/embed" and handler.allow_parallel_requests is True
     assert handler.max_queue_time == 60 and handler.workload_calculator({}) == 100
     assert handler.response_generator is None
     assert handler.benchmark_config is not None
