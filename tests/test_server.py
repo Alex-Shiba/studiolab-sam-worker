@@ -48,7 +48,8 @@ class FakeEncoder:
 async def client():
     encoder = FakeEncoder()
     connector = aiohttp.TCPConnector(resolver=aiohttp.ThreadedResolver())
-    async with TestClient(TestServer(server.make_app(encoder)), connector=connector) as client:
+    retirement = server.IdleRetirement(lambda line: None, env={})
+    async with TestClient(TestServer(server.make_app(encoder, retirement)), connector=connector) as client:
         yield client, encoder
 
 

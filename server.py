@@ -2,6 +2,7 @@
 
 import asyncio
 import base64
+from contextlib import suppress
 import hashlib
 import io
 import os
@@ -16,6 +17,7 @@ from PIL import Image
 import onnxruntime as ort
 
 from contract import HEADER, MODEL, NAMES, REVISION, SHAPES
+from self_destruct import IdleRetirement
 
 FILES = {
     "vision_encoder.onnx": (1_350_487, "ad3a8161c6bd6d8beea811300c60e20d626035feaa3c19622ace27b22e25bec8"),
@@ -119,8 +121,30 @@ class Encoder:
         return self.session.run(list(NAMES), {"pixel_values": normalize(rgb)})
 
 
-def make_app(encoder):
-    app = web.Application(client_max_size=8 * 1024 * 1024)
+def make_app(encoder, retirement=None):
+    retirement = retirement if retirement is not None else IdleRetirement(log_marker)
+
+    @web.middleware
+    async def activity(request, handler):
+        if request.method != "POST" or request.path != "/embed":
+            return await handler(request)
+        retirement.request_started()
+        try:
+            return await handler(request)
+        finally:
+            retirement.request_finished()
+
+    async def retire_context(app):
+        task = asyncio.create_task(retirement.run())
+        try:
+            yield
+        finally:
+            task.cancel()
+            with suppress(asyncio.CancelledError):
+                await task
+
+    app = web.Application(client_max_size=8 * 1024 * 1024, middlewares=[activity])
+    app.cleanup_ctx.append(retire_context)
     lock = asyncio.Lock()
 
     async def health(request):

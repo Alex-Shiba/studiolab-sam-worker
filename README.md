@@ -57,6 +57,33 @@ The search selects verified hosts, at least 12 GB VRAM and CUDA 12.8 or later, w
 
 No claims are made about cold-start time, billable test-worker counts, bandwidth price, worker certificate public-IP SAN, or real GPU feature parity. All remain **UNCONFIRMED**. TLS clients must trust Vast's CA and keep hostname verification; the worker retains Vast's authentication. No account or endpoint credentials are needed by this repository's tests.
 
+## Самоудаление
+
+Дважды 2026-10-19 остановленный после 600 секунд простоя worker застревал:
+при пробуждении Vast возвращал `resources_unavailable`, если GPU уже занял другой
+арендатор, и не подбирал новую машину. Оба наблюдения относятся к 2026-10-19;
+отдельная вторая дата в исходных данных не указана.
+
+Поэтому сервер удаляет свой инстанс после `SAM_SELF_DESTRUCT_IDLE_S` секунд
+простоя (по умолчанию 540, то есть 9 минут; `0` отключает самоудаление).
+Начало и завершение каждого `/embed`, включая проверочные запросы прокси,
+обновляют часы простоя; `/health` не влияет на них. Пока есть запросы в работе,
+удаление не начинается. Проверка выполняется каждые 15 секунд.
+Используются внедрённые Vast `CONTAINER_ID` и `CONTAINER_API_KEY`; без них
+сервер один раз пишет причину пропуска в журнал модели и ничего не вызывает.
+Ключ не записывается в журнал. Тайм-аут DELETE — 20 секунд; при сетевой ошибке
+или 5xx допускаются три повтора с интервалом 30 секунд, при 4xx повторов нет.
+После отправки DELETE новые запросы не отменяют удаление; сервер обслуживает
+их до завершения контейнера. У endpoint сохраняется `cold_workers 0`.
+
+Проверка на живом endpoint: разбудить worker, дождаться завершения запросов,
+подождать 9–10 минут без новых запросов и убедиться, что инстанс исчез из аккаунта.
+Следующий запрос маршрута должен запустить подбор новой машины.
+Локальные тесты этого поведения используют подменённые часы и HTTP, без сети:
+`python -m pytest -q tests/test_self_destruct.py`. Если pytest отсутствует,
+доступен запуск через стандартную библиотеку:
+`python -m unittest discover -s tests -p test_self_destruct.py`.
+
 ## Contract
 
 `GET /health` returns 200 after warm-up. `POST /embed` accepts JSON:
