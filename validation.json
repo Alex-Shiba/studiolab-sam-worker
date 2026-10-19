@@ -1,0 +1,44 @@
+{
+  "python": "3.10.6",
+  "venv": "vast-worker/.venv",
+  "launcher_note": "py -3.10 could not discover the installed interpreter; the venv was created with the installed Python310/python.exe directly.",
+  "pytest": {
+    "command": "vast-worker/.venv/Scripts/python.exe -m pytest vast-worker/tests --basetemp=vast-worker/.cache/pytest -q --tb=short",
+    "passed": 26,
+    "failed": 0,
+    "seconds": 53.10,
+    "exit_code": 0,
+    "note": "Third-party pyreadline3 emitted a Windows console-cleanup warning at interpreter shutdown."
+  },
+  "pip_check": "passed",
+  "eslint_node_tool": "passed",
+  "git_diff_check": "passed",
+  "cpu_parity": {
+    "frames": 2,
+    "report": "PARITY.md",
+    "normalized_inputs_bit_identical": true,
+    "fp32_max_absolute_error": 0,
+    "fp32_max_relative_error": 0,
+    "fp16_to_fp16_max_absolute_error": 0,
+    "fp16_to_fp16_max_relative_error": 0,
+    "fp16_wire_to_fp32_max_elementwise_relative_error": 1.0,
+    "fp16_wire_to_fp32_max_tensor_normalized_infinity_error": 0.00044800665,
+    "strict_transport_gate": "failed",
+    "exit_code": 1,
+    "reason": "The identical failure occurs when quantizing Node's own outputs; fp16 cannot preserve tiny nonzero values with relative error below 1e-3."
+  },
+  "wire": {
+    "health_status": 200,
+    "embed_status": 200,
+    "content_type": "application/octet-stream",
+    "bytes": 8388616,
+    "header": "SAMF",
+    "version": 1
+  },
+  "gpu_tested": false,
+  "vast_called": false,
+  "paid_calls": 0,
+  "committed": false,
+  "pushed": false,
+  "opus_review": "pending conductor"
+}

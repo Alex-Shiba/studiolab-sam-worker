@@ -1,0 +1,48 @@
+{
+  "needs": [
+    {
+      "item": "publication",
+      "detail": "Publish this folder as https://github.com/Alex-Shiba/studiolab-sam-worker and pin PYWORKER_REF to the pushed commit."
+    },
+    {
+      "item": "base_image_and_bootstrap",
+      "detail": "Template uses vastai/base-image:cuda-12.8.1-cudnn-devel-ubuntu24.04-py310-2026-10-13 with the platform-run pyworker.sh; confirm on the first worker that start_server.sh runs and CUDA is the active provider."
+    },
+    {
+      "item": "port_and_platform_environment",
+      "detail": "Confirm -p 3000:3000 produces VAST_TCP_PORT_3000 and PUBLIC_IPADDR, with the other Vast runtime variables. Port 18000 must remain loopback-only."
+    },
+    {
+      "item": "disk_size",
+      "detail": "20 GB is an estimate, not a measured deployment requirement; validate image, dependencies, model cache and quarantine headroom."
+    },
+    {
+      "item": "gpu",
+      "detail": "12 GB minimum VRAM comes from the brief, not a measured peak. Validate CUDA >=12.8, host driver, architecture/Blackwell support, actual CUDA provider activation and CUDA numerical parity."
+    },
+    {
+      "item": "search_params",
+      "detail": "Confirm verified=true rentable=true gpu_ram>=12 cuda_vers>=12.8 dph<=0.30 is accepted and preserved by the workergroup. gpu_ram units conflict in REST documentation; dph may require the documented dph_total spelling. Inspect effective template-derived filters."
+    },
+    {
+      "item": "price_ceiling",
+      "detail": "$0.30/hour is a proposed ceiling, not a confirmed offer or spend cap. Availability of matching offers and bandwidth prices are unconfirmed."
+    },
+    {
+      "item": "test_workers",
+      "detail": "The lowest accepted value is undocumented: try 0, otherwise use the actual minimum. Confirm its workergroup/endpoint placement and billing before activation."
+    },
+    {
+      "item": "live_behavior",
+      "detail": "Cold-start duration, public-IP SAN on the Vast-signed TLS certificate and actual bandwidth costs are unconfirmed. GPU/storage billing during Loading is contradictory in the supplied digests. No paid call is authorized in this run."
+    },
+    {
+      "item": "parity_acceptance",
+      "detail": "Resolve the raw elementwise relative-error threshold near zero for fp16 transport. Even Node's own fp32-to-fp16 conversion exceeds 1e-3 on the two required real frames; PARITY.md reports strict errors and a separate tensor-scale metric without changing the wire contract."
+    },
+    {
+      "item": "opus_review",
+      "detail": "The requested Opus review must be performed by the conductor; no Opus or other model-family reviewer is available through this executor's tools."
+    }
+  ]
+}

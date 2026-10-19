@@ -1,0 +1,5 @@
+vastai==1.8.3
+onnxruntime-gpu==1.23.2
+numpy==2.2.6
+Pillow==12.2.0
+aiohttp==3.14.0
