@@ -44,7 +44,7 @@ Set every value explicitly; defaults differ between the UI and API.
 | Field | Value | Confirmation |
 |---|---:|---|
 | `min_load` | 0 | Documented |
-| `cold_workers` | 1 | Documented; disk/bandwidth remain billable |
+| `cold_workers` | 0 | Без холодного worker: остановленная машина застревала с `resources_unavailable`, когда GPU занимал другой арендатор; Vast не заменял её. При пробуждении создаётся новая машина. |
 | `max_workers` | 2 | Documented |
 | `test_workers` | 0 if accepted, otherwise the lowest accepted value | **UNCONFIRMED minimum and billing; usually a workergroup field, not endpoint** |
 | `inactivity_timeout` | 600 | Documented seconds |
